@@ -1,4 +1,8 @@
-FROM nginx:1.25-alpine
+FROM nginx:alpine
 
-COPY nginx.conf /etc/nginx/nginx.conf
+ARG BUILD_DATE
+ENV BUILD_DATE=${BUILD_DATE}
+
 COPY index.html /usr/share/nginx/html/index.html
+
+RUN sed -i "s/{{BUILD_DATE}}/${BUILD_DATE}/g" /usr/share/nginx/html/index.html
