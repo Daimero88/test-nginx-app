@@ -33,10 +33,14 @@ jobs:
       - name: Configure kubectl
         run: |
           mkdir -p ~/.kube
-          cat <<EOF > ~/.kube/config
-          ${{ secrets.KUBE_CONFIG }}
-          EOF
+          echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config_raw
+          grep -v '^ *#' ~/.kube/config_raw > ~/.kube/config
           chmod 600 ~/.kube/config
+
+      - name: Verify cluster access
+        run: |
+          kubectl get pods -n kube-system
+          kubectl config current-context
 
       - name: Deploy to Cluster
         run: |
