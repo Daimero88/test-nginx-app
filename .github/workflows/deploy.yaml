@@ -16,9 +16,9 @@ jobs:
           echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
           sed -i "s/Version: .*/Version: ${{ env.VERSION }}/" index.html
 
-    - name: Login to Yandex Container Registry
-      run: |
-        echo "${{ secrets.YC_SECRET_KEY }}" | docker login --username ${{ secrets.YC_ACCESS_KEY }} --password-stdin cr.yandex.ru
+      - name: Login to Yandex Container Registry
+        run: |
+          echo "${{ secrets.YC_SECRET_KEY }}" | docker login --username ${{ secrets.YC_ACCESS_KEY }} --password-stdin cr.yandex.ru
 
       - name: Build and push Docker image
         run: |
