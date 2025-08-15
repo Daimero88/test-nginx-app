@@ -12,18 +12,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Login to Yandex Container Registry
-      run: |
-#        echo "${{ secrets.YC_SECRET_KEY }}" | docker login \
-        echo '${{ secrets.YC_SA_KEY }}' > key.json
-        cat key.json | docker login \
-          --username ${{ secrets.YC_ACCESS_KEY }} \
-          --password-stdin \
-          cr.yandex.ru
+      - name: Login to Yandex Container Registry
+        run: |
+          echo '${{ secrets.YC_SA_KEY }}' > key.json
+          cat key.json | docker login \
+            --username json_key \
+            --password-stdin \
+            cr.yandex.ru
 
-    - name: Build and push latest
-      run: |
-        docker build -t cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:latest .
-        docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:latest
+      - name: Build and push latest
+        run: |
+          docker build -t cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:latest .
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:latest
