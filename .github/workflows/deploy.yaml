@@ -25,12 +25,12 @@ jobs:
           docker build -t cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${{ env.VERSION }} .
           docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${{ env.VERSION }}
 
-    - name: Configure kubectl
-      run: |
-        mkdir -p ~/.kube
-        echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
-        chmod 600 ~/.kube/config
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
 
-    - name: Deploy to Cluster
-      run: |
-        kubectl set image deployment/test-nginx test-nginx=cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${{ env.VERSION }} -n ssilchin-nginx
+      - name: Deploy to Cluster
+        run: |
+          kubectl set image deployment/test-nginx test-nginx=cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${{ env.VERSION }} -n ssilchin-nginx
