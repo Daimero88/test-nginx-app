@@ -20,7 +20,7 @@ jobs:
           cat sa_key.json | docker login \
             --username json_key \
             --password-stdin \
-            cr.yandex.ru
+            cr.yandex
           rm -f sa_key.json
 
       - name: Build and push latest
