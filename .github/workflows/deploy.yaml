@@ -11,11 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set version
-        run: |
-          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
-          sed -i "s/Version: .*/Version: ${{ env.VERSION }}/" index.html
-
       - name: Login to Yandex Container Registry
         run: |
           echo '${{ secrets.YC_SA_KEY }}' > sa_key.json
@@ -35,11 +30,6 @@ jobs:
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
           chmod 600 ~/.kube/config
-
-      - name: Verify cluster access
-        run: |
-          kubectl get pods -n kube-system
-          kubectl config current-context
 
       - name: Deploy to Cluster
         run: |
