@@ -11,12 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Extract version from tag
-        id: extract_version
+      - name: Set up Docker and extract version
+        id: setup
         run: |
           VERSION="${GITHUB_REF#refs/tags/v}"
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${VERSION}" >> $GITHUB_ENV
           echo "Using version: ${VERSION}"
+          echo "Full image tag: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${VERSION}"
 
       - name: Login to Yandex Container Registry
         run: |
@@ -29,9 +30,9 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          echo "Building image with tag: ${{ env.VERSION }}"
-          docker build -t cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${{ env.VERSION }} .
-          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${{ env.VERSION }}
+          echo "Building image with tag: ${IMAGE_TAG}"
+          docker build -t ${IMAGE_TAG} .
+          docker push ${IMAGE_TAG}
 
       - name: Configure kubectl
         run: |
@@ -41,7 +42,7 @@ jobs:
 
       - name: Deploy to Cluster
         run: |
-          echo "Deploying version: ${{ env.VERSION }}"
+          echo "Deploying version: ${IMAGE_TAG}"
           kubectl set image deployment/test-nginx \
-            test-nginx=cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${{ env.VERSION }} \
+            test-nginx=${IMAGE_TAG} \
             -n ssilchin-nginx
