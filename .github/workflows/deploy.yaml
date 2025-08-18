@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+env:
+  VERSION: ${{ github.ref_name#v }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
