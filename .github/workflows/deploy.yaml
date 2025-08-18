@@ -5,20 +5,11 @@ on:
     tags:
       - 'v*'
 
-#env:
-#  VERSION: ${{ github.ref_name.replace('v','') }}
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Set version (remove 'v' prefix)
-        id: set_version
-        run: |
-          VERSION="${GITHUB_REF#refs/tags/v}"
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       - name: Login to Yandex Container Registry
         run: |
@@ -31,8 +22,10 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${{ env.VERSION }} .
-          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${{ env.VERSION }}
+          VERSION="${GITHUB_REF#refs/tags/v}
+          echo "Building image with tag: ${{ env.VERSION }}"
+          docker build -t cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${{VERSION}} .
+          docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${{VERSION}}
 
       - name: Configure kubectl
         run: |
@@ -43,5 +36,5 @@ jobs:
       - name: Deploy to Cluster
         run: |
           kubectl set image deployment/test-nginx \
-            test-nginx=cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${{ env.VERSION }} \
+            test-nginx=cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:${{VERSION}} \
             -n ssilchin-nginx
