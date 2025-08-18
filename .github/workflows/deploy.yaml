@@ -5,14 +5,20 @@ on:
     tags:
       - 'v*'
 
-env:
-  VERSION: ${{ github.ref_name.replace('v','') }}
+#env:
+#  VERSION: ${{ github.ref_name.replace('v','') }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Set version (remove 'v' prefix)
+        id: set_version
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       - name: Login to Yandex Container Registry
         run: |
