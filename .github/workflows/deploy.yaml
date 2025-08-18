@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 env:
-  VERSION: ${{ github.ref_name#v }}
+  VERSION: ${{ github.ref_name.replace('v','') }}
 
 jobs:
   deploy:
