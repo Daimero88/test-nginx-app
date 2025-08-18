@@ -25,5 +25,5 @@ jobs:
 
       - name: Build and push latest
         run: |
-          docker build -t cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:latest .
+          docker build --no-cache -t cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:latest .
           docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/test-nginx-app:latest
